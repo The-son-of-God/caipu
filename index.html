@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    #box1{
+        width: 600px;
+        margin: 100px auto;
+    }
+    #box{
+
+    }
+    input{
+        width: 490px;
+        height: 40px;
+    }
+    button{
+        margin-left: -5px;
+        width: 100px;
+        height: 45px;
+        background-color: #0000FF;
+        color:#fff;
+    }
+    li{
+        list-style:none;
+    }
+    p{
+        margin: 10px 0;
+    }
+
+</style>
+<div id="box1">
+    <input type="text">
+    <button>搜索</button>
+    <div id="box">
+
+
+    </div>
+</div>
+</body>
+<script>
+
+    window.addEventListener('load',function () {
+
+        var input = document.querySelector('input');
+        var button = document.querySelector('button');
+        var box = document.querySelector('#box');
+
+       button.onclick = function () {
+           var ajax = new XMLHttpRequest();
+           ajax.open('get','http://jisusrecipe.market.alicloudapi.com/recipe/search?keyword = '+ input.value +'&num=10&start=0');
+           ajax.setRequestHeader('Authorization','APPCODE 06641d6a100840eca9c7880608912d6b');
+           ajax.send();
+           ajax.addEventListener('readystatechange',function () {
+               if(ajax.readyState ===4 && ajax.status === 200){
+                   var data = JSON.parse(ajax.responseText);
+                   var a = data.result.list[0];
+                   console.log(data);
+                   var str = '';
+                   str +='<h2>'+ a.name +'</h2>';
+                   str +='<p>适合：'+ a.peoplenum +'&nbsp&nbsp&nbsp&nbsp制作时间：'+ a.cookingtime +'分钟</p>';
+                   str +='<p>'+ a.content +'</p>';
+                   str += '<img src="'+ a.pic +'" alt="">';
+                   str +='<p>菜品优点:'+ a.tag +'</p>';
+                   str +='<p>手续食材:';
+                   for( i = 0; i < a.material.length; i++ ){
+                       str += a.material[i].mname +':'+ a.material[i].amount +'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+                   }
+                   str += '</p>';
+                   str += '<ul>';
+                   str += '<li>';
+                   for( j = 0; j < a.process.length; j++ ){
+                       str += '<p>'+ (j + 1) +'&nbsp&nbsp'+ a.process[j].pcontent +'</p>';
+                       str += '<img src="'+ a.process[j].pic +'" alt="">';
+                   }
+                   str += '</li>';
+                   str += '</ul>';
+                   box.innerHTML = str;
+                   console.log(ajax.responseText);
+               }
+           })
+       }
+
+    })
+
+
+</script>
+</html>
